@@ -20,13 +20,13 @@ export const voices: Voice[] = [
   {
     id: 4,
     name: "Will",
-    designation: "cs-CZ",
+    designation: "en-US",
     image: "https://unrealspeech.com/images/avatar-mid-14.jpg",
   },
   {
     id: 5,
     name: "Amy",
-    designation: "ru-RU",
+    designation: "en-US",
     image: "https://unrealspeech.com/images/avatar-mid-17.jpg",
   },
 ];
