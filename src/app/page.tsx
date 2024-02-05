@@ -16,18 +16,18 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [voice, setVoice] = useState<Voice>(voices[0]);
   const [audio, setAudio] = useState("");
-
-  const handleGenerate = useCallback(() => {
+  const [text, setText] = useState("");
+  const handleGenerate = () => {
     setLoading(true);
     axios
-      .post("/api/tts", { text: "Hello world", voice: voice.name })
+      .post("/api/tts", { text, voice: voice.name })
       .then(({ data }) => {
         setAudio(data.status.OutputUri[0]);
         toast.success("Audio generated successfully");
       })
       .catch((error) => toast.error(error.message))
       .finally(() => setLoading(false));
-  }, []);
+  };
 
   return (
     <main className="flex  min-h-screen items-center bg-black flex-col justify-around">
@@ -72,10 +72,14 @@ export default function Home() {
           blog post to audio in few seconds
         </h1>
         <div className="w-full mt-8 mb-4 bg-[#1d1d1d] shadowm-md border-[1px] h-[150px] border-gray-200/15 rounded-md">
-          <Textarea className="bg-transparent text-white border-none h-full" />
+          <Textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            className="bg-transparent text-white border-none h-full"
+          />
         </div>
         <div className="flex my-5 items-center space-x-4">
-          <AnimatedTooltip items={voices} />
+          <AnimatedTooltip setVoice={setVoice} items={voices} />
         </div>
         <Button
           onClick={handleGenerate}

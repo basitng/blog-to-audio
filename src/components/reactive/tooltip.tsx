@@ -11,6 +11,7 @@ import {
 
 export const AnimatedTooltip = ({
   items,
+  setVoice,
 }: {
   items: {
     id: number;
@@ -18,6 +19,7 @@ export const AnimatedTooltip = ({
     designation: string;
     image: string;
   }[];
+  setVoice: React.Dispatch<React.SetStateAction<Voice>>;
 }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [clickedIndex, setClickedIndex] = useState<number | null>(null);
@@ -43,6 +45,8 @@ export const AnimatedTooltip = ({
     if (clickedIndex === item.id) {
       setClickedIndex(null);
     } else {
+      console.log("clicked");
+      setVoice(item);
       setClickedIndex(item.id);
     }
   };
