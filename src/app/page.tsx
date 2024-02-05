@@ -1,4 +1,5 @@
 "use client";
+import WaveformAudio from "@/components/reactive/audio-form";
 import GridPattern from "@/components/reactive/grid-pattern";
 import SparklesCore from "@/components/reactive/particles";
 import Spotlight from "@/components/reactive/spotlight";
@@ -9,7 +10,7 @@ import { voices } from "@/lib/mock";
 import { cn } from "@/lib/utils";
 import axios from "axios";
 import { Loader } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function Home() {
@@ -25,12 +26,12 @@ export default function Home() {
         setAudio(data.status.OutputUri[0]);
         toast.success("Audio generated successfully");
       })
-      .catch((error) => toast.error(error.message))
+      .catch((error) => toast.error("Unable to generate audio"))
       .finally(() => setLoading(false));
   };
 
   return (
-    <main className="flex  min-h-screen items-center bg-black flex-col justify-around">
+    <main className="flex w-full md:px-0 px-3 min-h-screen items-center bg-black flex-col justify-around">
       <Spotlight
         className="-top-40 left-0 md:left-60 md:-top-20"
         fill="#06b6d4"
@@ -60,7 +61,7 @@ export default function Home() {
         className="w-full h-full absolute"
         particleColor="#FFFFFF"
       />
-      <div className="max-w-screen-sm relative z-50 w-full flex flex-col justify-center items-center">
+      <div className="md:max-w-screen-sm relative z-50 w-full flex flex-col justify-center items-center">
         <div className="w-[40rem] h-10 relative">
           {/* Gradients */}
           <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[2px] w-3/4 blur-sm" />
@@ -77,11 +78,13 @@ export default function Home() {
             onChange={(e) => setText(e.target.value)}
             className="bg-transparent text-white border-none h-full"
           />
+          <p className="text-sm text-white/65 py-2">{text.length} characters</p>
         </div>
         <div className="flex my-5 items-center space-x-4">
           <AnimatedTooltip setVoice={setVoice} items={voices} />
         </div>
         <Button
+          disabled={!voice || !text || loading}
           onClick={handleGenerate}
           className="bg-gradient-to-r from-cyan-500 to-blue-500 w-[180px] h-12"
         >
@@ -89,6 +92,14 @@ export default function Home() {
           {loading && <Loader className="w-6 h-6 ml-2 animate-spin" />}
         </Button>
       </div>
+      {audio && (
+        <div
+          className="w-full z-50 relative md:max-w-screen-sm p-2 flex items-center bg-[#18191c]"
+          style={{ borderRadius: 100 }}
+        >
+          <WaveformAudio loading={loading} height={70} url={audio} />
+        </div>
+      )}
     </main>
   );
 }

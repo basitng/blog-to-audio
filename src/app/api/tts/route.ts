@@ -5,7 +5,7 @@ export async function POST(req: Request, res: Response) {
   const { text, voice } = await req.json();
 
   const unrealSpeech = new UnrealSpeechAPI(process.env.UNREAL_SPEECH_API_KEY!);
-  console.log(text);
+  console.log(text, voice);
   try {
     const taskId = await unrealSpeech.createSynthesisTask(text, voice);
     const status = await unrealSpeech.getSynthesisTaskStatus(taskId);

@@ -1,13 +1,7 @@
 "use client";
+import React, { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import React, { useState } from "react";
-import {
-  motion,
-  useTransform,
-  AnimatePresence,
-  useMotionValue,
-  useSpring,
-} from "framer-motion";
 
 export const AnimatedTooltip = ({
   items,
@@ -23,22 +17,13 @@ export const AnimatedTooltip = ({
 }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [clickedIndex, setClickedIndex] = useState<number | null>(null);
+  const xRef = useRef<number>(0);
 
   const springConfig = { stiffness: 100, damping: 5 };
-  const x = useMotionValue(0);
-  // rotate the tooltip
-  const rotate = useSpring(
-    useTransform(x, [-100, 100], [-45, 45]),
-    springConfig
-  );
-  // translate the tooltip
-  const translateX = useSpring(
-    useTransform(x, [-100, 100], [-50, 50]),
-    springConfig
-  );
-  const handleMouseMove = (event: any) => {
-    const halfWidth = event.target.offsetWidth / 2;
-    x.set(event.nativeEvent.offsetX - halfWidth);
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    const halfWidth = event.currentTarget.offsetWidth / 2;
+    xRef.current = event.nativeEvent.offsetX - halfWidth;
   };
 
   const handleItemClick = (item: any) => {
@@ -55,13 +40,13 @@ export const AnimatedTooltip = ({
     <>
       {items.map((item, idx) => (
         <div
-          className="-mr-4  relative group"
+          className="relative group"
           key={item.name}
           onMouseEnter={() => setHoveredIndex(item.id)}
           onMouseLeave={() => setHoveredIndex(null)}
           onClick={() => handleItemClick(item)}
         >
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             {hoveredIndex === item.id && (
               <motion.div
                 initial={{ opacity: 0, y: 20, scale: 0.6 }}
@@ -77,11 +62,10 @@ export const AnimatedTooltip = ({
                 }}
                 exit={{ opacity: 0, y: 20, scale: 0.6 }}
                 style={{
-                  translateX: translateX,
-                  rotate: rotate,
+                  translateX: xRef.current,
                   whiteSpace: "nowrap",
                 }}
-                className="absolute -top-16 -left-1/2 translate-x-1/2 flex text-xs  flex-col items-center justify-center rounded-md bg-black z-50 shadow-xl px-4 py-2"
+                className="absolute -top-16 -left-1/2 translate-x-1/2 flex text-xs flex-col items-center justify-center rounded-md bg-black z-50 shadow-xl px-4 py-2"
               >
                 <div className="absolute inset-x-10 z-30 w-[20%] -bottom-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent h-px " />
                 <div className="absolute left-10 w-[40%] z-30 -bottom-px bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px " />
@@ -98,8 +82,8 @@ export const AnimatedTooltip = ({
             width={100}
             src={item.image}
             alt={item.name}
-            className={`object-cover !m-0 !p-0 object-top rounded-full h-14 w-14 ${
-              clickedIndex === item.id
+            className={`object-cover  !m-0 !p-0 object-top rounded-full h-14 w-14 ${
+              clickedIndex === item.id || (item.id === 1 && !clickedIndex)
                 ? "border-2 border-pink-500"
                 : "border-2 border-white"
             } relative transition duration-500`}
